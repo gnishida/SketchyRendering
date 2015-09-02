@@ -16,6 +16,7 @@ public:
 	GLWidget3D(QWidget *parent = 0);
 
 	void drawScene(int drawMode);
+	void loadOBJ(char* filename);
 
 protected:
 	void initializeGL();

@@ -26,7 +26,7 @@ uniform int screenHeight;
 void main()
 {
 	if (pass == 1) {
-		outputF = vec4(fNormal, 1);
+		outputF = vec4((fNormal + 1) * 0.5, 1);
 	} else {
 		// for color mode
 		outputF = vec4(fColor, 1.0);
@@ -35,8 +35,11 @@ void main()
 		
 		vec3 n = texture(normalMap, vec2(gl_FragCoord.x / screenWidth, gl_FragCoord.y / screenHeight)).xyz;
 		float diff = 0;
-		for (int xx = -3; xx <= 3; ++xx) {
-			for (int yy = -3; yy <= 3; ++yy) {
+		int range = 1;
+		for (int xx = -range; xx <= range; ++xx) {
+			for (int yy = -range; yy <= range; ++yy) {
+				if (xx == 0 && yy == 0) continue;
+
 				vec3 nn = texture(normalMap, vec2((gl_FragCoord.x+xx) / screenWidth, (gl_FragCoord.y+yy) / screenHeight)).xyz;
 				if (nn.x == 0 && nn.y == 0 && nn.z == 0) {
 					diff = 1.0;

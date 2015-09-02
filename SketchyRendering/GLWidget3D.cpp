@@ -115,23 +115,16 @@ void GLWidget3D::paintGL() {
 /**
  * Draw the scene.
  */
-void GLWidget3D::drawScene(int drawMode) {	
-	renderManager.removeObjects();
-
-	std::vector<Vertex> vertices;
-	vertices.push_back(Vertex(glm::vec3(-10, 0, 0), glm::vec3(0, 0, 1), glm::vec3(1, 1, 1)));
-	vertices.push_back(Vertex(glm::vec3(10, 0, 0), glm::vec3(0, 0, 1), glm::vec3(1, 1, 1)));
-	vertices.push_back(Vertex(glm::vec3(0, 10, 0), glm::vec3(0, 0, 1), glm::vec3(1, 1, 1)));
-
-	vertices.push_back(Vertex(glm::vec3(-30, 0, -30), glm::vec3(0, 1, 0), glm::vec3(1, 0.8, 0.8)));
-	vertices.push_back(Vertex(glm::vec3(-30, 0, 30), glm::vec3(0, 1, 0), glm::vec3(1, 0.8, 0.8)));
-	vertices.push_back(Vertex(glm::vec3(30, 0, 30), glm::vec3(0, 1, 0), glm::vec3(1, 0.8, 0.8)));
-
-	vertices.push_back(Vertex(glm::vec3(-30, 0, -30), glm::vec3(0, 1, 0), glm::vec3(1, 0.8, 0.8)));
-	vertices.push_back(Vertex(glm::vec3(30, 0, 30), glm::vec3(0, 1, 0), glm::vec3(1, 0.8, 0.8)));
-	vertices.push_back(Vertex(glm::vec3(30, 0, -30), glm::vec3(0, 1, 0), glm::vec3(1, 0.8, 0.8)));
-	renderManager.addObject("object", "", vertices);
-
+void GLWidget3D::drawScene(int drawMode) {
 	renderManager.renderAll();
 }
 
+void GLWidget3D::loadOBJ(char* filename) {
+	renderManager.removeObjects();
+
+	std::vector<Vertex> vertices;
+	OBJLoader::load(filename, vertices);
+	renderManager.addObject("object", "", vertices);
+
+	updateGL();
+}
