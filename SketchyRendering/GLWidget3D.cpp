@@ -45,7 +45,7 @@ void GLWidget3D::mouseMoveEvent(QMouseEvent *e) {
 void GLWidget3D::initializeGL() {
 	renderManager.init("../shaders/vertex.glsl", "", "../shaders/fragment.glsl");
 
-	rb.init(renderManager.program, width(), height());
+	rb.init(renderManager.program, 4, 5, width(), height());
 }
 
 /**

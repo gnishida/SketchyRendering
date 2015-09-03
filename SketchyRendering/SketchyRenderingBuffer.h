@@ -18,7 +18,7 @@ public:
 public:
 	SketchyRenderingBuffer();
 
-	void init(int programId, int width, int height);
+	void init(int programId, int textureNormalIndex, int textureDepthIndex, int width, int height);
 	void update(int width, int height);
 	void pass1();
 	void pass2();

@@ -11,7 +11,7 @@ SketchyRenderingBuffer::SketchyRenderingBuffer() {
  * @param width			シャドウマッピングの幅
  * @param height		シャドウマッピングの高さ
  */
-void SketchyRenderingBuffer::init(int programId, int width, int height) {
+void SketchyRenderingBuffer::init(int programId, int textureNormalIndex, int textureDepthIndex, int width, int height) {
 	this->programId = programId;
 	this->width = width;
 	this->height = height;
@@ -25,7 +25,7 @@ void SketchyRenderingBuffer::init(int programId, int width, int height) {
 
 	// GL_TEXTURE5に、このバッファをbindすることで、
 	// シェーダからは5番でアクセスできる
-	glActiveTexture(GL_TEXTURE5);
+	glActiveTexture(GL_TEXTURE0 + textureNormalIndex);
 	glBindTexture(GL_TEXTURE_2D, textureNormal);
 
 	// テクスチャパラメータの設定
@@ -48,7 +48,7 @@ void SketchyRenderingBuffer::init(int programId, int width, int height) {
 
 	// GL_TEXTURE6に、このバッファをbindすることで、
 	// シェーダからは6番でアクセスできる
-	glActiveTexture(GL_TEXTURE6);
+	glActiveTexture(GL_TEXTURE0 + textureDepthIndex);
 	glBindTexture(GL_TEXTURE_2D, textureDepth);
 
 	// テクスチャパラメータの設定
@@ -68,8 +68,8 @@ void SketchyRenderingBuffer::init(int programId, int width, int height) {
 	glActiveTexture(GL_TEXTURE0);
 			
 	// シェーダに、normalバッファとdepthバッファの番号を伝える
-	glUniform1i(glGetUniformLocation(programId, "normalMap"), 5);
-	glUniform1i(glGetUniformLocation(programId, "depthMap"), 6);
+	glUniform1i(glGetUniformLocation(programId, "normalMap"), textureNormalIndex);
+	glUniform1i(glGetUniformLocation(programId, "depthMap"), textureDepthIndex);
 
 	glBindFramebuffer(GL_FRAMEBUFFER,0);
 }
