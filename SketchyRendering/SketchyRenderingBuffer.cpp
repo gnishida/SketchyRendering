@@ -1,6 +1,6 @@
-﻿#include "RenderingBuffer.h"
+﻿#include "SketchyRenderingBuffer.h"
 
-RenderingBuffer::RenderingBuffer() {
+SketchyRenderingBuffer::SketchyRenderingBuffer() {
 }
 
 /**
@@ -11,7 +11,7 @@ RenderingBuffer::RenderingBuffer() {
  * @param width			シャドウマッピングの幅
  * @param height		シャドウマッピングの高さ
  */
-void RenderingBuffer::init(int programId, int width, int height) {
+void SketchyRenderingBuffer::init(int programId, int width, int height) {
 	this->programId = programId;
 	this->width = width;
 	this->height = height;
@@ -74,7 +74,7 @@ void RenderingBuffer::init(int programId, int width, int height) {
 	glBindFramebuffer(GL_FRAMEBUFFER,0);
 }
 
-void RenderingBuffer::update(int width, int height) {
+void SketchyRenderingBuffer::update(int width, int height) {
 	this->width = width;
 	this->height = height;
 
@@ -87,4 +87,30 @@ void RenderingBuffer::update(int width, int height) {
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32, width, height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, 0);
 
 	glBindFramebuffer(GL_FRAMEBUFFER,0);
+}
+
+void SketchyRenderingBuffer::pass1() {
+	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+	glEnable(GL_TEXTURE_2D);
+
+	glUniform1i(glGetUniformLocation(programId, "pass"), 1);
+
+	//glEnable(GL_POLYGON_OFFSET_FILL);
+	//glPolygonOffset(1.1f, 4.0f);
+
+	glClearColor(0, 0, 0, 0);
+	glClear(GL_COLOR_BUFFER_BIT);
+	glClear(GL_DEPTH_BUFFER_BIT);
+}
+
+void SketchyRenderingBuffer::pass2() {
+	glUniform1i(glGetUniformLocation(programId, "pass"), 2);
+	glUniform1i(glGetUniformLocation(programId, "screenWidth"), width);
+	glUniform1i(glGetUniformLocation(programId, "screenHeight"), height);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glClearColor(0.443, 0.439, 0.458, 0.0);
+	glClear(GL_COLOR_BUFFER_BIT);
+	glClear(GL_DEPTH_BUFFER_BIT);
+
 }

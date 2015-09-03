@@ -9,11 +9,6 @@ GLWidget3D::GLWidget3D(QWidget *parent) : QGLWidget(QGLFormat(QGL::SampleBuffers
 	// 光源位置をセット
 	// ShadowMappingは平行光源を使っている。この位置から原点方向を平行光源の方向とする。
 	light_dir = glm::normalize(glm::vec3(-4, -5, -8));
-
-	// シャドウマップ用のmodel/view/projection行列を作成
-	/*glm::mat4 light_pMatrix = glm::ortho<float>(-50, 50, -50, 50, 0.1, 200);
-	glm::mat4 light_mvMatrix = glm::lookAt(-light_dir * 50.0f, glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
-	light_mvpMatrix = light_pMatrix * light_mvMatrix;*/
 }
 
 /**
@@ -80,33 +75,11 @@ void GLWidget3D::paintGL() {
 	//glUniform1fv(glGetUniformLocation(renderManager.program, "lightDir"), 3, &light_dir[0]);
 	glUniform3f(glGetUniformLocation(renderManager.program, "lightDir"), light_dir.x, light_dir.y, light_dir.z);
 	
-
-	//// normalバッファ、depthバッファを更新
-	glBindFramebuffer(GL_FRAMEBUFFER, rb.fbo);
-	glEnable(GL_TEXTURE_2D);
-
-	glUniform1i(glGetUniformLocation(renderManager.program, "pass"), 1);
-
-	glEnable(GL_POLYGON_OFFSET_FILL);
-	glPolygonOffset(1.1f, 4.0f);
-
-	glClearColor(0, 0, 0, 0);
-	glClear(GL_COLOR_BUFFER_BIT);
-	glClear(GL_DEPTH_BUFFER_BIT);
-
+	rb.pass1();
 	drawScene(0);
 
-
-	glUniform1i(glGetUniformLocation(renderManager.program, "pass"), 2);
-	glUniform1i(glGetUniformLocation(renderManager.program, "screenWidth"), width());
-	glUniform1i(glGetUniformLocation(renderManager.program, "screenHeight"), height());
-
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	glClearColor(0.443, 0.439, 0.458, 0.0);
-	glClear(GL_COLOR_BUFFER_BIT);
-	glClear(GL_DEPTH_BUFFER_BIT);
+	rb.pass2();
 	drawScene(0);
-	
 }
 
 /**

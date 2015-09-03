@@ -3,7 +3,7 @@
 #include <glew.h>
 #include <QGLWidget>
 
-class RenderingBuffer {
+class SketchyRenderingBuffer {
 public:
 public:
 	int width;
@@ -16,9 +16,11 @@ public:
 	uint textureDepth;
 
 public:
-	RenderingBuffer();
+	SketchyRenderingBuffer();
 
 	void init(int programId, int width, int height);
 	void update(int width, int height);
+	void pass1();
+	void pass2();
 };
 

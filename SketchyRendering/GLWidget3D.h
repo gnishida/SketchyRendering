@@ -7,7 +7,7 @@
 #include <QMouseEvent>
 #include "Camera.h"
 #include "RenderManager.h"
-#include "RenderingBuffer.h"
+#include "SketchyRenderingBuffer.h"
 
 class MainWindow;
 
@@ -32,6 +32,6 @@ public:
 	glm::mat4 light_mvpMatrix;
 
 	RenderManager renderManager;
-	RenderingBuffer rb;
+	SketchyRenderingBuffer rb;
 };
 
