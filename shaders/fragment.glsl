@@ -37,15 +37,15 @@ void main() {
 		int range = 1;
 
 		int num_iterations = 2;
-		float scale_x[3] = float[](113.0, 317.0, 237.0);
-		float scale_y[3] = float[](170.0, 257.0, 237.0);
-		float scale_z[3] = float[](143.0, 217.0, 237.0);
+		float scale_x[3] = float[](1.13, 3.17, 237.0);
+		float scale_y[3] = float[](1.71, 2.57, 237.0);
+		float scale_z[3] = float[](1.43, 2.17, 237.0);
 		int cycle_size[3] = int[](273, 193, 311);
-		float jitter_size = 3.0;
+		float jitter_size = 2.0;
 		for (int iter = 0; iter < num_iterations; ++iter) {
-			float sx = gl_FragCoord.x + random(vPosition, scale_x[iter], cycle_size[iter]) * jitter_size;
-			float sy = gl_FragCoord.y + random(vPosition, scale_y[iter], cycle_size[iter]) * jitter_size;
-			float sz = gl_FragCoord.z + random(vPosition, scale_z[iter], cycle_size[iter]) * jitter_size;
+			float sx = gl_FragCoord.x + random(gl_FragCoord.xyz + vPosition * 30, scale_x[iter], cycle_size[iter]) * jitter_size;
+			float sy = gl_FragCoord.y + random(gl_FragCoord.xyz + vPosition * 30, scale_y[iter], cycle_size[iter]) * jitter_size;
+			float sz = gl_FragCoord.z + random(gl_FragCoord.xyz + vPosition * 30, scale_z[iter], cycle_size[iter]) * jitter_size;
 
 			// difference in normal between this pixel and the neighbor pixels
 			vec3 n = texture(normalMap, vec2(sx / screenWidth, sy / screenHeight)).xyz;
@@ -63,7 +63,7 @@ void main() {
 					}
 
 					float dd = texture(depthMap, vec2((sx+xx) / screenWidth, (sy+yy) / screenHeight)).x;
-					diff = max(diff, abs(dd - d) * 200);
+					diff = max(diff, abs(dd - d) * 1000);
 				}
 			}
 		}
