@@ -22,6 +22,11 @@ uniform sampler2D depthMap;
 uniform int screenWidth;
 uniform int screenHeight;
 
+// return random value in [-1, 1]
+float random(float seed, float scale, int cycle_size) {
+	return float(int(seed * scale) % (cycle_size * 2 + 1) - cycle_size) / float(cycle_size);
+}
+
 void main() {
 	if (pass == 1) {
 		outputF = vec4((fNormal + 1) * 0.5, 1);
@@ -29,27 +34,41 @@ void main() {
 		// for color mode
 		outputF = vec4(fColor, 1.0);
 
-		// difference in normal between this pixel and the neighbor pixels
-		vec3 n = texture(normalMap, vec2(gl_FragCoord.x / screenWidth, gl_FragCoord.y / screenHeight)).xyz;
-		float d = texture(depthMap, vec2(gl_FragCoord.x / screenWidth, gl_FragCoord.y / screenHeight)).x;
-
 		float diff = 0;
 		int range = 1;
-		for (int xx = -range; xx <= range; ++xx) {
-			for (int yy = -range; yy <= range; ++yy) {
-				if (xx == 0 && yy == 0) continue;
 
-				vec3 nn = texture(normalMap, vec2((gl_FragCoord.x+xx) / screenWidth, (gl_FragCoord.y+yy) / screenHeight)).xyz;
-				if (nn.x == 0 && nn.y == 0 && nn.z == 0) {
-					diff = 1.0;
-				} else {
-					diff = max(diff, length(nn - n));
+		int num_iterations = 2;
+		float scale_x[5] = float[](93.0, 317.0, 237.0, 133.0, 147.0);
+		float scale_y[5] = float[](170.0, 317.0, 237.0, 133.0, 147.0);
+		float scale_z[5] = float[](93.0, 317.0, 237.0, 133.0, 147.0);
+		int cycle_size[5] = int[](73, 193, 311, 117, 213);
+		float jitter_size = 3.0;
+		for (int iter = 0; iter < num_iterations; ++iter) {
+			float sx = gl_FragCoord.x + random(fPosition.x + fPosition.y + fPosition.z, scale_x[iter], cycle_size[iter]) * jitter_size;
+			float sy = gl_FragCoord.y + random(fPosition.x + fPosition.y + fPosition.z, scale_y[iter], cycle_size[iter]) * jitter_size;
+			float sz = gl_FragCoord.z + random(fPosition.x + fPosition.y + fPosition.z, scale_z[iter], cycle_size[iter]) * jitter_size;
+
+			// difference in normal between this pixel and the neighbor pixels
+			vec3 n = texture(normalMap, vec2(sx / screenWidth, sy / screenHeight)).xyz;
+			float d = texture(depthMap, vec2(sx / screenWidth, sy / screenHeight)).x;
+
+			for (int xx = -range; xx <= range; ++xx) {
+				for (int yy = -range; yy <= range; ++yy) {
+					if (xx == 0 && yy == 0) continue;
+
+					vec3 nn = texture(normalMap, vec2((sx+xx) / screenWidth, (sy+yy) / screenHeight)).xyz;
+					if (nn.x == 0 && nn.y == 0 && nn.z == 0) {
+						diff = 1.0;
+					} else {
+						diff = max(diff, length(nn - n));
+					}
+
+					float dd = texture(depthMap, vec2((sx+xx) / screenWidth, (sy+yy) / screenHeight)).x;
+					diff = max(diff, abs(dd - d) * 100);
 				}
-
-				float dd = texture(depthMap, vec2((gl_FragCoord.x+xx) / screenWidth, (gl_FragCoord.y+yy) / screenHeight)).x;
-				diff = max(diff, abs(dd - d) * 100);
 			}
 		}
+
 		diff = min(1, diff);
 		if (diff < 0.1) {
 			diff = 0;
