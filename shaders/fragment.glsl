@@ -1,10 +1,10 @@
 #version 330
 
 // varying variables
-in vec3 vColor;
-in vec3 vTexCoord;
-in vec3 vNormal;
-in vec3 vPosition;
+in vec3 fColor;
+in vec3 fTexCoord;
+in vec3 fNormal;
+in vec3 fPosition;
 
 // output color
 out vec4 outputF;
@@ -24,10 +24,10 @@ uniform int screenHeight;
 
 void main() {
 	if (pass == 1) {
-		outputF = vec4((vNormal + 1) * 0.5, 1);
+		outputF = vec4((fNormal + 1) * 0.5, 1);
 	} else {
 		// for color mode
-		outputF = vec4(vColor, 1.0);
+		outputF = vec4(fColor, 1.0);
 
 		// difference in normal between this pixel and the neighbor pixels
 		vec3 n = texture(normalMap, vec2(gl_FragCoord.x / screenWidth, gl_FragCoord.y / screenHeight)).xyz;
@@ -64,12 +64,12 @@ void main() {
 	
 
 		if (textureEnabled == 1) { // for texture mode
-			outputF = texture(tex0, vTexCoord.rg);
+			outputF = texture(tex0, fTexCoord.rg);
 		}
 
 		// lighting
 		vec4 ambient = vec4(0.3, 0.3, 0.3, 1.0);
-		vec4 diffuse = vec4(0.7, 0.7, 0.7, 1.0) * max(0.0, dot(-lightDir, vNormal));
+		vec4 diffuse = vec4(0.7, 0.7, 0.7, 1.0) * max(0.0, dot(-lightDir, fNormal));
 
 		outputF = (ambient + diffuse) * outputF;
 	}
