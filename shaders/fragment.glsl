@@ -37,10 +37,10 @@ void main() {
 		int range = 1;
 
 		int num_iterations = 2;
-		float scale_x[5] = float[](93.0, 317.0, 237.0, 133.0, 147.0);
-		float scale_y[5] = float[](170.0, 317.0, 237.0, 133.0, 147.0);
-		float scale_z[5] = float[](93.0, 317.0, 237.0, 133.0, 147.0);
-		int cycle_size[5] = int[](73, 193, 311, 117, 213);
+		float scale_x[3] = float[](113.0, 317.0, 237.0);
+		float scale_y[3] = float[](170.0, 257.0, 237.0);
+		float scale_z[3] = float[](143.0, 217.0, 237.0);
+		int cycle_size[3] = int[](273, 193, 311);
 		float jitter_size = 3.0;
 		for (int iter = 0; iter < num_iterations; ++iter) {
 			float sx = gl_FragCoord.x + random(vPosition, scale_x[iter], cycle_size[iter]) * jitter_size;
@@ -63,7 +63,7 @@ void main() {
 					}
 
 					float dd = texture(depthMap, vec2((sx+xx) / screenWidth, (sy+yy) / screenHeight)).x;
-					diff = max(diff, abs(dd - d) * 100);
+					diff = max(diff, abs(dd - d) * 200);
 				}
 			}
 		}

@@ -112,19 +112,19 @@ void OBJLoader::load(const char* filename, std::vector<Vertex>& vertices) {
 			}
 		}
 
-		if (t_elements.size() > 0) {
+		/*if (t_elements.size() > 0) {
 			for (int j = 0; j < 2; ++j) {
 				vertices[i].texCoord[j] = raw_texCoords[t_elements[i]*2 + j];
 				vertices[i+1].texCoord[j] = raw_texCoords[t_elements[i+1]*2 + j];
 				vertices[i+2].texCoord[j] = raw_texCoords[t_elements[i+2]*2 + j];
 			}
-		} else {
+		} else {*/
 			for (int j = 0; j < 2; ++j) {
 				vertices[i].texCoord[j] = 0.0f;
 				vertices[i+1].texCoord[j] = 0.0f;
 				vertices[i+2].texCoord[j] = 0.0f;
 			}
-		}
+		//}
 
 		// assign some colors
 		for (int j = 0; j < 3; ++j) {
