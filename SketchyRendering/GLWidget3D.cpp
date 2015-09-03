@@ -48,10 +48,7 @@ void GLWidget3D::mouseMoveEvent(QMouseEvent *e) {
  * This function is called once before the first call to paintGL() or resizeGL().
  */
 void GLWidget3D::initializeGL() {
-	renderManager.init("../shaders/vertex.glsl", "../shaders/geometry.glsl", "../shaders/fragment.glsl");
-
-	// set the clear color for the screen
-	//qglClearColor(QColor(113, 112, 117));
+	renderManager.init("../shaders/vertex.glsl", "", "../shaders/fragment.glsl");
 
 	rb.init(renderManager.program, width(), height());
 }
@@ -85,7 +82,7 @@ void GLWidget3D::paintGL() {
 	
 
 	//// normalバッファ、depthバッファを更新
-	glBindFramebuffer(GL_FRAMEBUFFER, rb.fboNormal);
+	glBindFramebuffer(GL_FRAMEBUFFER, rb.fbo);
 	glEnable(GL_TEXTURE_2D);
 
 	glUniform1i(glGetUniformLocation(renderManager.program, "pass"), 1);

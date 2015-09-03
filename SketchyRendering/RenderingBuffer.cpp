@@ -17,8 +17,8 @@ void RenderingBuffer::init(int programId, int width, int height) {
 	this->height = height;
 
 	// FBO作成
-	glGenFramebuffers(1, &fboNormal);
-	glBindFramebuffer(GL_FRAMEBUFFER, fboNormal);
+	glGenFramebuffers(1, &fbo);
+	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 		
 	// normalバッファを保存するための2Dテクスチャを作成
 	glGenTextures(1, &textureNormal);
@@ -34,8 +34,7 @@ void RenderingBuffer::init(int programId, int width, int height) {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-    // テクスチャ領域の確保(GL_DEPTH_COMPONENTを用いる)
-	//glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32, width, height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, 0);
+    // テクスチャ領域の確保(GL_RGBAを用いる)
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_FLOAT, 0);
 
 	// 生成した2Dテクスチャを、デプスバッファとしてfboに括り付ける。
@@ -79,7 +78,7 @@ void RenderingBuffer::update(int width, int height) {
 	this->width = width;
 	this->height = height;
 
-	glBindFramebuffer(GL_FRAMEBUFFER, fboNormal);
+	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 		
 	glBindTexture(GL_TEXTURE_2D, textureNormal);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_FLOAT, 0);

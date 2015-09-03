@@ -1,11 +1,10 @@
 #version 330
 
 // varying variables
-in vec3 fColor;
-in vec3 fTexCoord;
-in vec3 fNormal;
-in vec3 fPosition;
-noperspective in vec3 dist;
+in vec3 vColor;
+in vec3 vTexCoord;
+in vec3 vNormal;
+in vec3 vPosition;
 
 // output color
 out vec4 outputF;
@@ -23,17 +22,17 @@ uniform sampler2D depthMap;
 uniform int screenWidth;
 uniform int screenHeight;
 
-void main()
-{
+void main() {
 	if (pass == 1) {
-		outputF = vec4((fNormal + 1) * 0.5, 1);
+		outputF = vec4((vNormal + 1) * 0.5, 1);
 	} else {
 		// for color mode
-		outputF = vec4(fColor, 1.0);
+		outputF = vec4(vColor, 1.0);
 
-		/////// debug
-		
+		// difference in normal between this pixel and the neighbor pixels
 		vec3 n = texture(normalMap, vec2(gl_FragCoord.x / screenWidth, gl_FragCoord.y / screenHeight)).xyz;
+		float d = texture(depthMap, vec2(gl_FragCoord.x / screenWidth, gl_FragCoord.y / screenHeight)).x;
+
 		float diff = 0;
 		int range = 1;
 		for (int xx = -range; xx <= range; ++xx) {
@@ -46,39 +45,33 @@ void main()
 				} else {
 					diff = max(diff, length(nn - n));
 				}
+
+				float dd = texture(depthMap, vec2((gl_FragCoord.x+xx) / screenWidth, (gl_FragCoord.y+yy) / screenHeight)).x;
+				diff = max(diff, abs(dd - d) * 100);
 			}
 		}
 		diff = min(1, diff);
+		if (diff < 0.1) {
+			diff = 0;
+		} else {
+			diff = 1;
+		}
 		outputF = vec4(1 - diff, 1 - diff, 1 - diff, 1);
 		
 		//outputF = texture(normalMap, vec2(gl_FragCoord.x / screenWidth, gl_FragCoord.y / screenHeight));
 		return;
 
-		/////// debug
-
-
-
-		
-		// determine frag distance to closest edge
-		float nearD = min(min(dist[0],dist[1]),dist[2]);
-		float edgeIntensity = exp2(-1.0*nearD*nearD);
+	
 
 		if (textureEnabled == 1) { // for texture mode
-			outputF = texture(tex0, fTexCoord.rg);
+			outputF = texture(tex0, vTexCoord.rg);
 		}
-
-		// check the normal in the neighborhood
-
 
 		// lighting
 		vec4 ambient = vec4(0.3, 0.3, 0.3, 1.0);
-		vec4 diffuse = vec4(0.7, 0.7, 0.7, 1.0) * max(0.0, dot(-lightDir, fNormal));
+		vec4 diffuse = vec4(0.7, 0.7, 0.7, 1.0) * max(0.0, dot(-lightDir, vNormal));
 
 		outputF = (ambient + diffuse) * outputF;
-
-		if (wireframeEnalbed == 1) {
-			outputF = edgeIntensity * vec4(0.05, 0.05, 0.05, 1.0) + (1.0 - edgeIntensity) * outputF;
-		}
 	}
 }
 

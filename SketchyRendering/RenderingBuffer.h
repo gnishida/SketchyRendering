@@ -11,9 +11,8 @@ public:
 
 	int programId;
 
-	uint fboNormal;
+	uint fbo;
 	uint textureNormal;
-	uint fboDepth;
 	uint textureDepth;
 
 public:
